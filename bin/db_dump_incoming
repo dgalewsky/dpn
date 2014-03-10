@@ -1,0 +1,1 @@
+$DPN_HOME/db/dpn.db 'select * from dpn_inbound_transfer;'

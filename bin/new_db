@@ -1,0 +1,3 @@
+SQL=$DPN_HOME/sql/new_db.sql
+rm $DPN_HOME/db/dpn.db
+sqlite3 $DPN_HOME/db/dpn.db ".read $SQL"

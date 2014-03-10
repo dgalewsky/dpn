@@ -1,0 +1,15 @@
+#!/usr/bin/php
+
+<?php
+	
+	require_once 'dpn_utils.php';
+	require_once 'common.php';
+	require_once 'dpn_file_transfer_db_utils.php';
+	
+	
+	
+	$correlation_id = uniqid();
+	
+	new_inbound_transfer($correlation_id, 'rsync', '/dpn/outgoing/dpn-bag1.tar', 'ou812-reply');
+
+

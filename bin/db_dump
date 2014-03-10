@@ -1,0 +1,2 @@
+sqlite3 $DPN_HOME/db/dpn.db .dump
+
