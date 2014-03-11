@@ -30,12 +30,12 @@ function save_registry_entry($body) {
 	$replicating_node_names = $body['replicating_node_names'];     
 	$version_number = $body['version_number'];             
 
-	if (isset($body['previous_version_object_id'])
+	if (isset($body['previous_version_object_id']))
 	    $previous_version_object_id = $body['previous_version_object_id']; 
 	else
 	    $previous_version_object_id = "";
 
-	if (isset($body['forward_version_object_id'])
+	if (isset($body['forward_version_object_id']))
 	    $forward_version_object_id = $body['forward_version_object_id'];  
 	else
 	    $forward_version_object_id = "";
