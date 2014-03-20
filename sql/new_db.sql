@@ -1,4 +1,5 @@
 PRAGMA foreign_keys=OFF;
+pragma journal_mode=WAL;
 BEGIN TRANSACTION;
 
 CREATE TABLE dpn_file (

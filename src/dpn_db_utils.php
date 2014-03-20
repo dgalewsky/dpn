@@ -20,6 +20,8 @@ function new_dpn_registry_item_create_message($correlation_id, $message) {
 	}
 	
 	$db->close();
+	unset($db);
+
 }
 
 function ack_dpn_registry_item_create_message($correlation_id, $node) {
@@ -39,7 +41,10 @@ function ack_dpn_registry_item_create_message($correlation_id, $node) {
 		
 	$db = db_connect();	
 	$db->exec("update dpn_registry_item_create_message_detail set ack_time = current_timestamp where nodename = '$node'");
-	$db->close();	    
+
+        $db->close();
+        unset($db);
+
 }
 
 // See if we already have records for recording regstry messages.
@@ -51,7 +56,10 @@ function registry_item_message_exists($correlation_id) {
 	
 	return ($obj != "");
 	
-	$db->close();
+
+        $db->close();
+        unset($db);
+
 		
 }
 
@@ -71,6 +79,10 @@ function get_registry_json() {
 	    $ret_array[] = $reg;
 	}	
 	
+
+        $db->close();
+        unset($db);
+
 	return $ret_array;
 	
 }
@@ -80,6 +92,7 @@ function get_registry_json() {
 
 function db_connect() {
 	$db = new SQLite3($_SERVER["DPN_HOME"] . "/db/dpn.db");	
+	$db->busyTimeout(5000);
 	return $db;
 }
 

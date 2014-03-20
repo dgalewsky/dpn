@@ -20,6 +20,7 @@ function new_dpn_file($filename, $checksum, $filesize, $correlation_id) {
 	$db->exec("INSERT INTO dpn_file (file_path, checksum, file_size, correlation_id, dpn_object_id) VALUES ('$filename', '$checksum', '$filesize', '$correlation_id', '$dpn_object_id')");
 	
 	$db->close();
+	unset($db);
 	return $dpn_object_id;
 }
 
@@ -30,6 +31,10 @@ function new_dpn_file($filename, $checksum, $filesize, $correlation_id) {
 function get_file_path_from_correlation_id($correlation_id) {
         $db = db_connect();
 	$path = $db->querySingle("SELECT file_path FROM dpn_file where correlation_id = '$correlation_id'");
+
+        $db->close();
+        unset($db);
+
 	return $path;		
 }
 
@@ -39,6 +44,10 @@ function get_dpn_file_checksum($correlation_id) {
 	$db = db_connect();	
 		
 	$checksum = $db->querySingle("SELECT checksum FROM dpn_file where correlation_id = '$correlation_id'");
+
+        $db->close();
+        unset($db);
+
 	return $checksum;
 }
 
@@ -54,7 +63,10 @@ function new_outbound_transfer($correlation_id, $destination) {
 	
 	$db->exec("INSERT INTO dpn_outbound_transfer (correlation_id, destination, status) VALUES ('$correlation_id', '$destination', '$status')");
 	
-	$db->close();
+
+        $db->close();
+        unset($db);
+
 }
 
 // Update the outbound transfer record to show success
@@ -70,7 +82,10 @@ function set_outbound_transfer_success($correlation_id, $destination) {
 	
 	$db->exec("update dpn_outbound_transfer set transfer_succesful_timestamp = '$timestr', status = '$status' where correlation_id = '$correlation_id' and destination = '$destination'");
 	
-	$db->close();	
+
+        $db->close();
+        unset($db);
+
 }
 
 // Update the outbound transfer record to show hashes didn't match - retry
@@ -83,7 +98,10 @@ function set_outbound_transfer_retry($correlation_id, $destination) {
 	
 	$db->exec("update dpn_outbound_transfer set status = '$status' where correlation_id = '$correlation_id' and destination = '$destination'");
 	
-	$db->close();	
+
+        $db->close();
+        unset($db);
+
 }
 
 
@@ -104,7 +122,10 @@ function new_inbound_transfer($correlation_id, $protocol, $location, $reply_key,
 	
 	$db->exec("INSERT INTO dpn_inbound_transfer (correlation_id, protocol, location, status, reply_key, source) VALUES ('$correlation_id', '$protocol', '$location', '$status', '$reply_key', '$source')");
 	
-	$db->close();
+
+        $db->close();
+        unset($db);
+
 }
 
 //
@@ -118,6 +139,10 @@ function get_next_inbound_file() {
 		
 	$res = $ret->fetchArray(SQLITE3_ASSOC);
 	
+
+        $db->close();
+        unset($db);
+
 	return $res;		
 }
 
@@ -132,7 +157,10 @@ function set_inbound_file_status($correlation_id, $status) {
 	
 	$db->exec("update dpn_inbound_transfer set status = '$status' where correlation_id = '$correlation_id'");
 	
-	$db->close();	
+
+        $db->close();
+        unset($db);
+
 }
 
 // Map correlation_id to reply_key
@@ -140,6 +168,10 @@ function set_inbound_file_status($correlation_id, $status) {
 function get_inbound_reply_key_from_correlation_id($correlation_id) {
         $db = db_connect();
 	$path = $db->querySingle("SELECT reply_key FROM dpn_inbound_transfer where correlation_id = '$correlation_id'");
+
+        $db->close();
+        unset($db);
+
 	return $path;		
 }
 
@@ -153,7 +185,10 @@ function set_inbound_file_checksum($correlation_id, $checksum) {
 	
 	$db->exec("update dpn_inbound_transfer set checksum = '$checksum' where correlation_id = '$correlation_id'");
 	
-	$db->close();	
+
+        $db->close();
+        unset($db);
+
 }
 
 // Map correlation_id to object_id. 
@@ -161,12 +196,22 @@ function set_inbound_file_checksum($correlation_id, $checksum) {
 function get_object_id_from_correlation($correlation_id) {
         $db = db_connect();
 	$obj = $db->querySingle("SELECT dpn_object_id FROM dpn_file where correlation_id = '$correlation_id'");
+
+
+        $db->close();
+        unset($db);
+
 	return $obj;		
 }
 
 function get_file_path_from_objectid($object_id) {
 	$db = db_connect();
 	$path = $db->querySingle("select file_path from dpn_file where dpn_object_id = '$object_id'");
+
+
+        $db->close();
+        unset($db);
+
 	
 	return $path;
 	
@@ -179,6 +224,10 @@ function get_correlation_id_from_objectid($object_id) {
 	$db = db_connect();
 	$path = $db->querySingle("select correlation_id from dpn_file where dpn_object_id = '$object_id'");
 	
+
+        $db->close();
+        unset($db);
+
 	return $path;
 	
 }
