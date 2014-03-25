@@ -1,5 +1,6 @@
 PRAGMA foreign_keys=OFF;
-pragma journal_mode=WAL;
+
+
 BEGIN TRANSACTION;
 
 CREATE TABLE dpn_file (
@@ -29,6 +30,17 @@ CREATE TABLE dpn_inbound_transfer (
 	source varchar(256),
 	reply_key varchar(256),
 	checksum varchar(256));
+
+--
+-- dpn_irods_transfer - a request to transfer a dpn bag to iRODS
+--
+
+CREATE TABLE dpn_irods_transfer (
+	id integer primary key autoincrement,
+	dpn_object_id varchar(32),
+	creation_timestamp DATETIME DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now')),
+	transfer_timestame DATETIME
+	);
 	
 create table dpn_registry_item_create_message (
 	id integer primary key autoincrement,

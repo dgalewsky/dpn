@@ -42,4 +42,3 @@ dpn_puts("dg_test", "2015 Production system at TB scale");
 
 */
 
-function 
