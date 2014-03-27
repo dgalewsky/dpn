@@ -9,12 +9,38 @@ $log = new KLogger($_SERVER["DPN_HOME"] . "/log/dpn_log.txt", KLogger::INFO);
 function new_dpn_irods_transfer($dpn_object_id) {
 	$db = db_connect();
 	
-	$db->exec("insert into dpn_irods_transfer(dpn_object_id) values ($dpn_object_id)");
+	$db->exec("insert into dpn_irods_transfer(dpn_object_id) values ('$dpn_object_id')");
 		
 }
 
+//
+// Get next file for iRODS.
+//
 
+function get_next_irods_transfer() {
+	
+	echo "Get_next_irods\n";
+	
+        $db = db_connect();
+	$res = $db->querySingle("SELECT dpn_object_id FROM dpn_irods_transfer where transfer_timestamp is null order by creation_timestamp ");
+		
 
+        $db->close();
+        unset($db);
+
+	return $res;		
+}
+
+function set_irods_transfer_timestamp($dpn_object_id) {
+        $db = db_connect();
+        
+        $timestr = date('c', time());
+	
+	$db->exec("update dpn_irods_transfer set transfer_timestamp = '$timestr' where dpn_object_id = '$dpn_object_id'"); 
+	
+	$db->close();
+	unset($db);
+}
 
 
 

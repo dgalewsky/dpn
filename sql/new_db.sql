@@ -39,7 +39,7 @@ CREATE TABLE dpn_irods_transfer (
 	id integer primary key autoincrement,
 	dpn_object_id varchar(32),
 	creation_timestamp DATETIME DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now')),
-	transfer_timestame DATETIME
+	transfer_timestamp DATETIME
 	);
 	
 create table dpn_registry_item_create_message (
