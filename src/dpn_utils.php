@@ -320,7 +320,182 @@ function send_registry_daterange_sync_list_reply($start, $end, $correlation_id, 
 }
 
 
+//
+// RECOVERY Messages
+//
+// (First-Node) Send a recovery-init-query. Requesting a dpn-bag that we used to have
+// but now can not find.
 
+function send_recovery_request($filename, $correlation_id, $object_id) {
+	global $log;
+	
+	$log->LogInfo( "Sending recovery-init-query to broadcast");
+	
+	$properties = array(
+		    'headers'        => array(
+		    'from'           => NODE,
+		    'reply_key'      => 'dpn.utexas.inbound',
+		    'correlation_id' => $correlation_id,
+		    'sequence'       => 0,
+		    'date'           => date('c', time()),
+		    'ttl'            => get_ttl(),
+		),
+	);
+	
+	$body = array(
+		'message_name'       => 'recovery-init-query',
+		'protocol'           => array('rsync'),
+		'dpn_object_id'	     => $object_id,
+	);
+	
+	$ch = setup_channel();
+	$ex = setup_exchange($ch);
+	
+	$log->LogInfo("SENT: " . json_encode($body));
+	
+	$ex->publish(json_encode($body), 'broadcast', AMQP_NOPARAM, $properties);
+}
+
+//
+// (Replicating Node) Send recovery_available_reply - indicating that we are able to come get a package
+// We need to check the registry - 1 - to make sure the other node has rights and 2 - to check that we have it.
+//
+
+function send_recovery_available_reply($protocol, $reply_key, $correlation_id) {
+	global $log;
+	
+	$log->LogInfo( "Sending recovery-available-reply to $reply_key");
+	
+	$properties = array(
+		    'headers'        => array(
+		    'from'           => NODE,
+		    'reply_key'      => 'dpn.utexas.inbound',
+		    'correlation_id' => $correlation_id,
+		    'sequence'       => 1,
+		    'date'           => date('c', time()),
+		    'ttl'            => get_ttl(),
+		),
+	);
+	
+	$body = array(
+		'message_name'       => 'recovery-available-reply',
+		'avaliable_at'       => '2013-01-18T15:49:28Z',
+
+		'message_att'        => 'ack',
+		'protocol'	     => $protocol,
+		'cost'		     => '0');
+	
+	$ch = setup_channel();
+	$ex = setup_exchange($ch);
+
+	$log->LogInfo("SENT: " . json_encode($body));
+	
+	$ex->publish(json_encode($body), $reply_key, AMQP_NOPARAM, $properties);
+}
+
+
+//
+// (First Node) Send recovery_transfer_request to a specific node - indicating that we want to get the bag from that node
+//
+
+function send_recovery_transfer_request($protocol, $reply_key, $correlation_id) {
+	global $log;
+	
+	$log->LogInfo( "Sending recovery-transfer-request to $reply_key");
+	
+	$properties = array(
+		    'headers'        => array(
+		    'from'           => NODE,
+		    'reply_key'      => 'dpn.utexas.inbound',
+		    'correlation_id' => $correlation_id,
+		    'sequence'       => 1,
+		    'date'           => date('c', time()),
+		    'ttl'            => get_ttl(),
+		),
+	);
+	
+	$body = array(
+		'message_name'       => 'recovery_transfer_request',
+		'avaliable_at'       => '2013-01-18T15:49:28Z',
+		'message_att'        => 'ack',
+		'protocol'	     => $protocol);
+	
+	$ch = setup_channel();
+	$ex = setup_exchange($ch);
+
+	$log->LogInfo("SENT: " . json_encode($body));
+	
+	$ex->publish(json_encode($body), $reply_key, AMQP_NOPARAM, $properties);
+}
+
+
+//
+// (Replicating Node) Send recovery_transfer_reply to a specific node - indicating that we have content - ready to be pulled.
+// Caller supplies location of where to recovered file is located.
+//
+
+function send_recovery_transfer_reply($protocol, $reply_key, $correlation_id, $location) {
+	global $log;
+	
+	$log->LogInfo( "Sending recovery-transfer-request to $reply_key");
+	
+	$properties = array(
+		    'headers'        => array(
+		    'from'           => NODE,
+		    'reply_key'      => 'dpn.utexas.inbound',
+		    'correlation_id' => $correlation_id,
+		    'sequence'       => 1,
+		    'date'           => date('c', time()),
+		    'ttl'            => get_ttl(),
+		),
+	);
+	
+	$body = array(
+		'message_name'       => 'recovery_transfer_reply',
+		'protocol'	     => $protocol,
+		'location'	     => $location);
+	
+	$ch = setup_channel();
+	$ex = setup_exchange($ch);
+
+	$log->LogInfo("SENT: " . json_encode($body));
+	
+	$ex->publish(json_encode($body), $reply_key, AMQP_NOPARAM, $properties);
+}
+
+//
+// (Replicating Node) Send recovery_transfer_status - indicating that we have retrieved the bag and it can be deleted from staging area on remote system
+//
+
+function send_recovery_transfer_status($protocol, $reply_key, $status, $fixity) {
+	global $log;
+	
+	$log->LogInfo( "Sending recovery-transfer-status to $reply_key");
+	
+	$properties = array(
+		    'headers'        => array(
+		    'from'           => NODE,
+		    'reply_key'      => 'dpn.utexas.inbound',
+		    'correlation_id' => $correlation_id,
+		    'sequence'       => 1,
+		    'date'           => date('c', time()),
+		    'ttl'            => get_ttl(),
+		),
+	);
+	
+	$body = array(
+		'message_name'       => 'recovery_transfer_status',
+		'message_att'	     => $status,
+		'fixity_algorithm'   => 'sha256'
+		'fixity_value'	     => $fixity);
+	
+	$ch = setup_channel();
+	$ex = setup_exchange($ch);
+
+	$log->LogInfo("SENT: " . json_encode($body));
+	
+	$ex->publish(json_encode($body), $reply_key, AMQP_NOPARAM, $properties);
+}
 
 //
 // Get a message from the DPN queue - or return false - if there is no message available

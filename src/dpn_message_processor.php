@@ -358,6 +358,25 @@
 			
 		}
 		
+		//
+		// Recovery Messages
+		//
+		
+		
+		//
+		// (Replicating-node) recovery-init-query - Sent by a first node that needs to recover content.
+		//
+		
+		if ($message_name == 'recovery-init-query' ) {
+			
+			$log->LogInfo( "recovery_init_query from: " . $from . " Object id: " . $body['dpn_object_id'] );
+			
+			$object_id = $body['dpn_object_id'];
+
+			send_recovery_available_reply("rsync", $reply_key, $correlation_id);				
+	
+			return;
+		}		
 
 	}
 	

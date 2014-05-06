@@ -34,7 +34,10 @@ function get_next_irods_transfer() {
 function set_irods_transfer_timestamp($dpn_object_id) {
         $db = db_connect();
         
-        $timestr = date('c', time());
+        //$timestr = date('c', time());
+        $timestr = strftime('%Y-%m-%dT%H:%M:%SZ', time());
+	
+        echo "Time: $timestr\n";
 	
 	$db->exec("update dpn_irods_transfer set transfer_timestamp = '$timestr' where dpn_object_id = '$dpn_object_id'"); 
 	
