@@ -376,7 +376,47 @@
 			send_recovery_available_reply("rsync", $reply_key, $correlation_id);				
 	
 			return;
-		}		
+		}	
+		
+		
+		//
+		// (First-node) recovery-available-reply - Received from a replicating node indicating that they have the bag that we wanted
+		//
+		
+		if ($message_name == 'recovery-available-reply' ) {
+			
+			$log->LogInfo( "recovery-available-reply: " . $from . " Object id: " . $body['dpn_object_id'] );
+			
+			$object_id = $body['dpn_object_id'];
+			$available_at = $body['available_at'];
+			$message_att = $body['message_att'];
+			$protocol = $body['protocol'];
+			$cost = $cost['cost'];
+
+			send_recovery_transfer_request("rsync", $reply_key, $correlation_id);				
+	
+			return;
+		}
+		
+		//
+		// (Replicating-node) recovery-transfer-request - Received from a first-node indicating that we should stage the content. We have been chosen.
+		//
+		
+		if ($message_name == 'recovery-transfer-request' ) {
+			
+			$log->LogInfo( "recovery-transfer-request: " . $from . " Object id: " . $body['dpn_object_id'] );
+			
+			$object_id = $body['dpn_object_id'];
+			$message_att = $body['message_att'];
+			$protocol = $body['protocol'];
+
+			// At this point we go and stage the content and then send 
+			send_recovery_transfer_reply("rsync", $reply_key, $correlation_id, "/path-to/stage/file");				
+	
+			return;
+		}
+
+		
 
 	}
 	

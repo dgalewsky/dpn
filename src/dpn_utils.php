@@ -379,7 +379,7 @@ function send_recovery_available_reply($protocol, $reply_key, $correlation_id) {
 	
 	$body = array(
 		'message_name'       => 'recovery-available-reply',
-		'avaliable_at'       => '2013-01-18T15:49:28Z',
+		'available_at'       => '2013-01-18T15:49:28Z',
 
 		'message_att'        => 'ack',
 		'protocol'	     => $protocol,
@@ -416,7 +416,6 @@ function send_recovery_transfer_request($protocol, $reply_key, $correlation_id) 
 	
 	$body = array(
 		'message_name'       => 'recovery_transfer_request',
-		'avaliable_at'       => '2013-01-18T15:49:28Z',
 		'message_att'        => 'ack',
 		'protocol'	     => $protocol);
 	
