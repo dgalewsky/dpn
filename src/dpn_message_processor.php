@@ -415,8 +415,43 @@
 	
 			return;
 		}
-
 		
+
+		//
+		// (First-node) recovery-transfer-reply - Received from replicating node - indicating that the bag has been staged and is ready to pull
+		//
+		
+		if ($message_name == 'recovery-transfer-reply' ) {
+			
+			$log->LogInfo( "recovery-transfer-reply: " . $from . " Object id: " . $body['dpn_object_id'] );
+			
+			$object_id = $body['dpn_object_id'];
+			$message_att = $body['message_att'];
+			$protocol = $body['protocol'];
+
+			// At this point we pull the content and then send
+			send_recovery_transfer_status("rsync", $reply_key, $correlation_id, "/path-to/stage/file");				
+	
+			return;
+		}		
+
+		//
+		// (Replicating-node) recovery-transfer-status - Received from first node after they have pulled the content
+		//
+		
+		if ($message_name == 'recovery-transfer-status' ) {
+			
+			$log->LogInfo( "recovery-transfer-reply: " . $from . " Object id: " . $body['dpn_object_id'] );
+			
+			$object_id = $body['dpn_object_id'];
+			$message_att = $body['message_att'];
+			$protocol = $body['protocol'];
+
+			// At this point we pull the content and then send
+			send_recovery_transfer_status("rsync", $reply_key, $correlation_id, "/path-to/stage/file");				
+	
+			return;
+		}		
 
 	}
 	
