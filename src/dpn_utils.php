@@ -3,6 +3,7 @@
 require_once 'common.php';
 require_once 'KLogger.php';
 require_once "dpn_db_utils.php";
+require_once 'dpn_file_transfer_db_utils.php';
 
 // Set up the logger
 $log = new KLogger ( $_SERVER['DPN_HOME'] . "/log/dpn_log.txt" , KLogger::INFO );	
@@ -354,6 +355,8 @@ function send_recovery_request($correlation_id, $object_id) {
 	$log->LogInfo("SENT: " . json_encode($body));
 	
 	$ex->publish(json_encode($body), 'broadcast', AMQP_NOPARAM, $properties);
+	
+	new_recovery_request($correlation_id, $object_id);
 }
 
 //
@@ -398,7 +401,7 @@ function send_recovery_available_reply($protocol, $reply_key, $correlation_id) {
 // (First Node) Send recovery_transfer_request to a specific node - indicating that we want to get the bag from that node
 //
 
-function send_recovery_transfer_request($protocol, $reply_key, $correlation_id) {
+function send_recovery_transfer_request($protocol, $reply_key, $correlation_id, $from) {
 	global $log;
 	
 	$log->LogInfo( "Sending recovery-transfer-request to $reply_key");
@@ -425,6 +428,8 @@ function send_recovery_transfer_request($protocol, $reply_key, $correlation_id) 
 	$log->LogInfo("SENT: " . json_encode($body));
 	
 	$ex->publish(json_encode($body), $reply_key, AMQP_NOPARAM, $properties);
+	
+	set_recovery_request_recovery_source($correlation_id, $from);
 }
 
 
@@ -494,6 +499,11 @@ function send_recovery_transfer_status($protocol, $reply_key, $status, $fixity, 
 	$log->LogInfo("SENT: " . json_encode($body));
 	
 	$ex->publish(json_encode($body), $reply_key, AMQP_NOPARAM, $properties);
+	
+	if ($status = 'ack') {
+		set_recovery_request_status($correlation_id, 'complete');
+		
+	}
 }
 
 //

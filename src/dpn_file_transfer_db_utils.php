@@ -232,6 +232,56 @@ function get_correlation_id_from_objectid($object_id) {
 	
 }
 
+// 
+// Create a new record of a recovery request
+//
+
+function new_recovery_request($correlation_id, $object_id) {
+
+        $db = db_connect();
+        $status = INITIATED_STATUS;
+	
+	$db->exec("INSERT INTO dpn_recovery_request (correlation_id, object_id, status) VALUES ('$correlation_id', '$object_id', '$status')");	
+
+        $db->close();
+        unset($db);
+}
+
+//
+// Set recovery_source for a Transfer Request
+//
+
+function set_recovery_request_recovery_source($correlation_id, $recovery_source) {
+	
+        $db = db_connect();
+	
+	$db->exec("update dpn_recovery_request set recovery_source = '$recovery_source' where correlation_id = '$correlation_id'");
+	
+
+        $db->close();
+        unset($db);
+
+}
+
+//
+// Set recovery_source for a Transfer Request
+//
+
+function set_recovery_request_status($correlation_id, $status) {
+	
+        $db = db_connect();
+        
+        // Get ZULU time for timestamp
+        
+        $timestr = date('c', time());
+	
+	$db->exec("update dpn_recovery_request set status = '$status' where correlation_id = '$correlation_id'");
+	$db->exec("update dpn_recovery_request set recovery_succesful_timestamp = '$timestr'");
+
+        $db->close();
+        unset($db);
+
+}
 
 ?>
 

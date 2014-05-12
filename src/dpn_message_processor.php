@@ -398,7 +398,9 @@
 			$protocol = $body['protocol'];
 			$cost = $body['cost'];
 
-			send_recovery_transfer_request("rsync", $reply_key, $correlation_id);				
+			// Need to check that we have not already told someone else we would pull from them
+			
+			send_recovery_transfer_request("rsync", $reply_key, $correlation_id, $from);				
 	
 			return;
 		}

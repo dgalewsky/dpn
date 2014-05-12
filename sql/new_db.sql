@@ -89,6 +89,21 @@ create table dpn_registry_item_create_message_detail (
         dpn_registry_id integer,
   	object_id varchar(256)  
   );
+  
+--
+-- DPN recovery record
+--
+
+CREATE TABLE dpn_recovery_request (
+	id integer primary key autoincrement,
+	correlation_id varchar(32),
+	object_id varchar(256),
+	creation_timestamp DATETIME DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now')),
+	recovery_source varchar(256),
+	status varchar(256),
+	recovery_succesful_timestamp DATETIME);  
+  
+  
 	
 DELETE FROM sqlite_sequence;
 INSERT INTO "sqlite_sequence" VALUES('dpn_file',1);
@@ -100,6 +115,8 @@ INSERT INTO "sqlite_sequence" VALUES('dpn_registry',1);
 INSERT INTO "sqlite_sequence" VALUES('dpn_registry_node_names',1);
 INSERT INTO "sqlite_sequence" VALUES('dpn_registry_brightening_object_id',1);
 INSERT INTO "sqlite_sequence" VALUES('dpn_registry_rights_object_id',1);
+INSERT INTO "sqlite_sequence" VALUES('dpn_recovery_request',1);
+
 
 CREATE UNIQUE INDEX idx_object_id ON dpn_registry (dpn_object_id);
 
