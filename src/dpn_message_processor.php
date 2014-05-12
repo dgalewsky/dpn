@@ -15,26 +15,32 @@
 	
 	$log = new KLogger ( $_SERVER['DPN_HOME'] . "/log/dpn_log.txt" , KLogger::INFO );	
 	
-	$connection = new AMQPConnection();
+	while(1) {
 
-	try {
+		$connection = new AMQPConnection();
 		
-		$ch = setup_channel();
-		$ex = setup_exchange($ch);
+		try {
+			
+			$ch = setup_channel();
+			$ex = setup_exchange($ch);
+			
+			$q = setup_queue($ch);
+			
+			$home = $_SERVER['DPN_HOME'];
+			echo "DPN Message Processor - processing messages.\nLog file is: $home/log/dpn_log.txt\n";
+			
+			// Process messages.
+			
+			$q->consume('process_message', AMQP_AUTOACK);  // blocks
+			
+			
+		} catch ( Exception $e ) {
+			$log->LogInfo($e->getMessage() );
+		}
 		
-		$q = setup_queue($ch);
-		
-		$home = $_SERVER['DPN_HOME'];
-		echo "DPN Message Processor - processing messages.\nLog file is: $home/log/dpn_log.txt\n";
-		
-		// Process messages.
-		
-		$q->consume('process_message', AMQP_AUTOACK);  // blocks
-		
-		
-	} catch ( Exception $e ) {
-		$log->LogInfo($e->getMessage() );
+		$log->LogInfo("Exception with AMQPConnection");
 	}
+	
 	
 	function process_message($envelope) {
 		global $log;
@@ -385,13 +391,12 @@
 		
 		if ($message_name == 'recovery-available-reply' ) {
 			
-			$log->LogInfo( "recovery-available-reply: " . $from . " Object id: " . $body['dpn_object_id'] );
+			$log->LogInfo( "recovery-available-reply: " . $from);
 			
-			$object_id = $body['dpn_object_id'];
 			$available_at = $body['available_at'];
 			$message_att = $body['message_att'];
 			$protocol = $body['protocol'];
-			$cost = $cost['cost'];
+			$cost = $body['cost'];
 
 			send_recovery_transfer_request("rsync", $reply_key, $correlation_id);				
 	
@@ -404,9 +409,8 @@
 		
 		if ($message_name == 'recovery-transfer-request' ) {
 			
-			$log->LogInfo( "recovery-transfer-request: " . $from . " Object id: " . $body['dpn_object_id'] );
+			$log->LogInfo( "recovery-transfer-request: " . $from );
 			
-			$object_id = $body['dpn_object_id'];
 			$message_att = $body['message_att'];
 			$protocol = $body['protocol'];
 
@@ -423,14 +427,13 @@
 		
 		if ($message_name == 'recovery-transfer-reply' ) {
 			
-			$log->LogInfo( "recovery-transfer-reply: " . $from . " Object id: " . $body['dpn_object_id'] );
+			$log->LogInfo( "recovery-transfer-reply: " . $from );
 			
-			$object_id = $body['dpn_object_id'];
-			$message_att = $body['message_att'];
 			$protocol = $body['protocol'];
-
+			$location = $body['location'];
+			
 			// At this point we pull the content and then send
-			send_recovery_transfer_status("rsync", $reply_key, $correlation_id, "/path-to/stage/file");				
+			send_recovery_transfer_status("rsync", $reply_key, 'ack', 'ou812-fixity', $correlation_id);				
 	
 			return;
 		}		
@@ -441,14 +444,13 @@
 		
 		if ($message_name == 'recovery-transfer-status' ) {
 			
-			$log->LogInfo( "recovery-transfer-reply: " . $from . " Object id: " . $body['dpn_object_id'] );
+			$log->LogInfo( "recovery-transfer-status: " . $from );
 			
-			$object_id = $body['dpn_object_id'];
-			$message_att = $body['message_att'];
-			$protocol = $body['protocol'];
+			$message_att = $body['message_att'];			
+			$fixity_algorithm = $body['fixity_algorithm'];	
+			$fixity_value = $body['fixity_value'];			
 
-			// At this point we pull the content and then send
-			send_recovery_transfer_status("rsync", $reply_key, $correlation_id, "/path-to/stage/file");				
+			// Do something with the fact that we have acknowledged the transfer of the file. Clean up staging areas.
 	
 			return;
 		}		

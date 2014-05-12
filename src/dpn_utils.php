@@ -326,7 +326,7 @@ function send_registry_daterange_sync_list_reply($start, $end, $correlation_id, 
 // (First-Node) Send a recovery-init-query. Requesting a dpn-bag that we used to have
 // but now can not find.
 
-function send_recovery_request($filename, $correlation_id, $object_id) {
+function send_recovery_request($correlation_id, $object_id) {
 	global $log;
 	
 	$log->LogInfo( "Sending recovery-init-query to broadcast");
@@ -408,14 +408,14 @@ function send_recovery_transfer_request($protocol, $reply_key, $correlation_id) 
 		    'from'           => NODE,
 		    'reply_key'      => 'dpn.utexas.inbound',
 		    'correlation_id' => $correlation_id,
-		    'sequence'       => 1,
+		    'sequence'       => 2,
 		    'date'           => date('c', time()),
 		    'ttl'            => get_ttl(),
 		),
 	);
 	
 	$body = array(
-		'message_name'       => 'recovery_transfer_request',
+		'message_name'       => 'recovery-transfer-request',
 		'message_att'        => 'ack',
 		'protocol'	     => $protocol);
 	
@@ -443,14 +443,14 @@ function send_recovery_transfer_reply($protocol, $reply_key, $correlation_id, $l
 		    'from'           => NODE,
 		    'reply_key'      => 'dpn.utexas.inbound',
 		    'correlation_id' => $correlation_id,
-		    'sequence'       => 1,
+		    'sequence'       => 3,
 		    'date'           => date('c', time()),
 		    'ttl'            => get_ttl(),
 		),
 	);
 	
 	$body = array(
-		'message_name'       => 'recovery_transfer_reply',
+		'message_name'       => 'recovery-transfer-reply',
 		'protocol'	     => $protocol,
 		'location'	     => $location);
 	
@@ -466,7 +466,7 @@ function send_recovery_transfer_reply($protocol, $reply_key, $correlation_id, $l
 // (Replicating Node) Send recovery_transfer_status - indicating that we have retrieved the bag and it can be deleted from staging area on remote system
 //
 
-function send_recovery_transfer_status($protocol, $reply_key, $status, $fixity) {
+function send_recovery_transfer_status($protocol, $reply_key, $status, $fixity, $correlation_id) {
 	global $log;
 	
 	$log->LogInfo( "Sending recovery-transfer-status to $reply_key");
@@ -476,16 +476,16 @@ function send_recovery_transfer_status($protocol, $reply_key, $status, $fixity) 
 		    'from'           => NODE,
 		    'reply_key'      => 'dpn.utexas.inbound',
 		    'correlation_id' => $correlation_id,
-		    'sequence'       => 1,
+		    'sequence'       => 4,
 		    'date'           => date('c', time()),
 		    'ttl'            => get_ttl(),
 		),
 	);
 	
 	$body = array(
-		'message_name'       => 'recovery_transfer_status',
+		'message_name'       => 'recovery-transfer-status',
 		'message_att'	     => $status,
-		'fixity_algorithm'   => 'sha256'
+		'fixity_algorithm'   => 'sha256',
 		'fixity_value'	     => $fixity);
 	
 	$ch = setup_channel();
