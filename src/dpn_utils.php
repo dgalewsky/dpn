@@ -307,7 +307,7 @@ function send_registry_daterange_sync_list_reply($start, $end, $correlation_id, 
 	$ch = setup_channel();
 	$ex = setup_exchange($ch);
 	
-	$body['message_name'] = 'registry_daterange_sync_list_reply';
+	$body['message_name'] = 'registry-daterange-sync-list-reply';
 	
 	$daterange = array($start, $end);
 	
