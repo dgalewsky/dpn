@@ -378,9 +378,25 @@
 			$log->LogInfo( "recovery_init_query from: " . $from . " Object id: " . $body['dpn_object_id'] );
 			
 			$object_id = $body['dpn_object_id'];
+			$protocol = $body['protocol'];
+			
+			// See if we actually have the object 
+			
+			$reg = get_registry_info($object_id);
+			
+			var_dump($reg);
+			
+			if (!$reg) {
+			    $log->LogInfo("ERROR - Request for DPN object that we do not have: $object_id . Not sending recovery-available-reply");
+			    return;			    	    
+			}
 
 			send_recovery_available_reply("rsync", $reply_key, $correlation_id);				
-	
+			
+			// Create a record - for the staging of the file.
+			
+			new_recovery_file($correlation_id, $object_id);
+			
 			return;
 		}	
 		
@@ -400,6 +416,10 @@
 
 			// Need to check that we have not already told someone else we would pull from them
 			
+			$src = get_recovery_request_recovery_source($correlation_id);
+			
+			$log->LogInfo("Recovery Source: $src");
+			
 			send_recovery_transfer_request("rsync", $reply_key, $correlation_id, $from);				
 	
 			return;
@@ -416,8 +436,12 @@
 			$message_att = $body['message_att'];
 			$protocol = $body['protocol'];
 
-			// At this point we go and stage the content and then send 
-			send_recovery_transfer_reply("rsync", $reply_key, $correlation_id, "/path-to/stage/file");				
+			// At this point we go and stage the content  
+			// The dpn_recovery_request record starts off in state 'initiated'.
+			// 
+			
+			set_recovery_file_status($correlation_id,  READY_TO_STAGE_STATUS);
+			//send_recovery_transfer_reply("rsync", $reply_key, $correlation_id, "/path-to/stage/file");				
 	
 			return;
 		}
@@ -434,7 +458,8 @@
 			$protocol = $body['protocol'];
 			$location = $body['location'];
 			
-			// At this point we pull the content and then send
+			// At this point we pull the content and then when we are done sending - send:
+			
 			send_recovery_transfer_status("rsync", $reply_key, 'ack', 'ou812-fixity', $correlation_id);				
 	
 			return;

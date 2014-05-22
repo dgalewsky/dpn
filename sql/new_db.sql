@@ -103,7 +103,22 @@ CREATE TABLE dpn_recovery_request (
 	status varchar(256),
 	recovery_succesful_timestamp DATETIME);  
   
-  
+--
+-- DPN Recovery - file (Replicating node). Track information needed by the node
+-- when supplying a DPN bag for a recovery operation.
+--
+
+CREATE TABLE dpn_recovery_file (
+	id integer primary key autoincrement,
+	correlation_id varchar(32),
+	object_id varchar(256),
+	creation_timestamp DATETIME DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now')),
+	recovery_destination varchar(256),
+	status varchar(256),
+	path varchar(256),
+	recovery_succesful_timestamp DATETIME);  
+
+
 	
 DELETE FROM sqlite_sequence;
 INSERT INTO "sqlite_sequence" VALUES('dpn_file',1);

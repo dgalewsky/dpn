@@ -3,8 +3,8 @@
 require_once 'bagit.php';
 
 define('NODE',      'tdr-local');
-define('EXCHANGE',  'dpn-control-exchange');
-#define('EXCHANGE', 'test-control-exchange');
+#define('EXCHANGE',  'dpn-control-exchange');
+define('EXCHANGE', 'test-control-exchange');
 
 define('RSYNC_HOST_STRING', 'ubuntu@ec2-50-16-41-0.compute-1.amazonaws.com:');
 #define('RSYNC_HOST_STRING', 'dpn@dpn.lib.utexas.edu:');
@@ -19,6 +19,8 @@ define('COMPLETE_STATUS', 'complete');
 define('RETRY_STATUS', 'retry');
 define('ABORTED_STATUS', 'abort');
 define('INITIATED_STATUS', 'initiated');
+define('READY_TO_STAGE_STATUS', 'ready_to_stage');
+define('STAGED_STATUS', 'staged');
 
 
 function bag_size_format($path) {       

@@ -468,7 +468,7 @@ function send_recovery_transfer_reply($protocol, $reply_key, $correlation_id, $l
 }
 
 //
-// (Replicating Node) Send recovery_transfer_status - indicating that we have retrieved the bag and it can be deleted from staging area on remote system
+// (First Node) Send recovery_transfer_status - indicating that we have retrieved the bag and it can be deleted from staging area on remote system
 //
 
 function send_recovery_transfer_status($protocol, $reply_key, $status, $fixity, $correlation_id) {

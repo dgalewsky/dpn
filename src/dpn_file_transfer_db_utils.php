@@ -247,8 +247,25 @@ function new_recovery_request($correlation_id, $object_id) {
         unset($db);
 }
 
+
+// 
+// Create a new record of a recovery file - a file to be staged from our repo - for recovery. 
+// Called by a repilcating node - when it has been asked to provide a recovery file.
 //
-// Set recovery_source for a Transfer Request
+
+function new_recovery_file($correlation_id, $object_id) {
+
+        $db = db_connect();
+        $status = INITIATED_STATUS;
+	
+	$db->exec("INSERT INTO dpn_recovery_file (correlation_id, object_id, status) VALUES ('$correlation_id', '$object_id', '$status')");	
+
+        $db->close();
+        unset($db);
+}
+
+//
+// Set recovery_source for a Recovery Request
 //
 
 function set_recovery_request_recovery_source($correlation_id, $recovery_source) {
@@ -263,8 +280,26 @@ function set_recovery_request_recovery_source($correlation_id, $recovery_source)
 
 }
 
+
 //
-// Set recovery_source for a Transfer Request
+// Get recovery_source for a Recovery Request
+//
+
+function get_recovery_request_recovery_source($correlation_id) {
+	
+        $db = db_connect();
+
+       	$src = $db->querySingle("SELECT recovery_source FROM dpn_recovery_request where correlation_id = '$correlation_id'");	
+
+        $db->close();
+        unset($db);
+
+        return $src;
+}
+
+
+//
+// Set recovery_source for a Recovery Request
 //
 
 function set_recovery_request_status($correlation_id, $status) {
@@ -276,12 +311,35 @@ function set_recovery_request_status($correlation_id, $status) {
         $timestr = date('c', time());
 	
 	$db->exec("update dpn_recovery_request set status = '$status' where correlation_id = '$correlation_id'");
+	
+	// Should this actually get set here?
+	
 	$db->exec("update dpn_recovery_request set recovery_succesful_timestamp = '$timestr'");
 
         $db->close();
         unset($db);
 
 }
+
+//
+// Set status for a Recovery File
+//
+
+function set_recovery_file_status($correlation_id, $status) {
+	
+        $db = db_connect();
+        
+        // Get ZULU time for timestamp
+        
+        $timestr = date('c', time());
+	
+	$db->exec("update dpn_recovery_file set status = '$status' where correlation_id = '$correlation_id'");
+
+        $db->close();
+        unset($db);
+
+}
+
 
 ?>
 
