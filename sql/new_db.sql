@@ -116,6 +116,7 @@ CREATE TABLE dpn_recovery_file (
 	recovery_destination varchar(256),
 	status varchar(256),
 	path varchar(256),
+	reply_key varchar(256),
 	recovery_succesful_timestamp DATETIME);  
 
 

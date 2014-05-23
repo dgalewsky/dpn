@@ -395,7 +395,7 @@
 			
 			// Create a record - for the staging of the file.
 			
-			new_recovery_file($correlation_id, $object_id);
+			new_recovery_file($correlation_id, $object_id, $reply_key);
 			
 			return;
 		}	
@@ -441,6 +441,9 @@
 			// 
 			
 			set_recovery_file_status($correlation_id,  READY_TO_STAGE_STATUS);
+			
+			// Now a daemon needs to stage the file - and then send a recovery_transfer_reply - with the path to the file
+			
 			//send_recovery_transfer_reply("rsync", $reply_key, $correlation_id, "/path-to/stage/file");				
 	
 			return;

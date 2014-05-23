@@ -236,12 +236,12 @@ function get_correlation_id_from_objectid($object_id) {
 // Create a new record of a recovery request
 //
 
-function new_recovery_request($correlation_id, $object_id) {
+function new_recovery_request($correlation_id, $object_id, $reply_key) {
 
         $db = db_connect();
         $status = INITIATED_STATUS;
 	
-	$db->exec("INSERT INTO dpn_recovery_request (correlation_id, object_id, status) VALUES ('$correlation_id', '$object_id', '$status')");	
+	$db->exec("INSERT INTO dpn_recovery_request (correlation_id, object_id, reply_key, status) VALUES ('$correlation_id', '$object_id', '$status')");	
 
         $db->close();
         unset($db);
@@ -258,7 +258,7 @@ function new_recovery_file($correlation_id, $object_id) {
         $db = db_connect();
         $status = INITIATED_STATUS;
 	
-	$db->exec("INSERT INTO dpn_recovery_file (correlation_id, object_id, status) VALUES ('$correlation_id', '$object_id', '$status')");	
+	$db->exec("INSERT INTO dpn_recovery_file (correlation_id, object_id, status, reply_key) VALUES ('$correlation_id', '$object_id', '$status', '$reply_key')");	
 
         $db->close();
         unset($db);
@@ -340,6 +340,24 @@ function set_recovery_file_status($correlation_id, $status) {
 
 }
 
+//
+// Get next recovery file. 
+//
 
+function get_next_recovery_file() {
+	
+        $db = db_connect();
+        $status = READY_TO_STAGE_STATUS;
+        
+	$ret = $db->query("SELECT object_id, reply_key, correlation_id FROM dpn_recovery_file where status = '$status' order by creation_timestamp");
+		
+	$res = $ret->fetchArray(SQLITE3_ASSOC);
+	var_dump($res);
+	
+        $db->close();
+        unset($db);
+
+	return $res;		
+}
 ?>
 
