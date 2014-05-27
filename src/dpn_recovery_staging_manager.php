@@ -26,7 +26,7 @@
 	$correlation_id = $ret['correlation_id'];
 	
 	if ($obj_id == '') {
-	    $log->LogInfo('Nothing to transfer');
+	    $log->LogInfo('Nothing to recover.');
 	    return;
 	}
 	
@@ -44,7 +44,7 @@
 
 	// This should probably go to /dpn/recovery - once I have root access
 	
-	$handle = popen("iget -P -f tdr/$dirpart/$fname /dpn/outgoing", 'r');
+	$handle = popen("iget -P -f tdr/$dirpart/$correlation_id /dpn/outgoing", 'r');
 
 	while(!feof($handle)) {
 	    $read = fread($handle, 1024);

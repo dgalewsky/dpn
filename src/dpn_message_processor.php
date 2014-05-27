@@ -380,12 +380,16 @@
 			$object_id = $body['dpn_object_id'];
 			$protocol = $body['protocol'];
 			
+			
 			// See if we actually have the object 
 			
 			$reg = get_registry_info($object_id);
 			
 			var_dump($reg);
 			
+			//
+			// TODO -- We should send a 'NAK'
+			//
 			if (!$reg) {
 			    $log->LogInfo("ERROR - Request for DPN object that we do not have: $object_id . Not sending recovery-available-reply");
 			    return;			    	    

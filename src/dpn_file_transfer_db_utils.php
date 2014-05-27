@@ -236,12 +236,12 @@ function get_correlation_id_from_objectid($object_id) {
 // Create a new record of a recovery request
 //
 
-function new_recovery_request($correlation_id, $object_id, $reply_key) {
+function new_recovery_request($correlation_id, $object_id) {
 
         $db = db_connect();
         $status = INITIATED_STATUS;
 	
-	$db->exec("INSERT INTO dpn_recovery_request (correlation_id, object_id, reply_key, status) VALUES ('$correlation_id', '$object_id', '$status')");	
+	$db->exec("INSERT INTO dpn_recovery_request (correlation_id, object_id, status) VALUES ('$correlation_id', '$object_id', '$status')");	
 
         $db->close();
         unset($db);
@@ -253,7 +253,7 @@ function new_recovery_request($correlation_id, $object_id, $reply_key) {
 // Called by a repilcating node - when it has been asked to provide a recovery file.
 //
 
-function new_recovery_file($correlation_id, $object_id) {
+function new_recovery_file($correlation_id, $object_id, $reply_key) {
 
         $db = db_connect();
         $status = INITIATED_STATUS;
