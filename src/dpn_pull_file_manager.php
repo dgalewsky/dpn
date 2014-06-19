@@ -29,7 +29,7 @@
 	
 	set_inbound_file_status($correlation_id, TRANSFERRING_STATUS);
 		
-	$handle = popen("rsync -azv $location /dpn/incoming/", 'r');
+	$handle = popen("rsync -avL $location /dpn/incoming/", 'r');
 
 	while(!feof($handle)) { 
 	    $read = fread($handle, 1024); 

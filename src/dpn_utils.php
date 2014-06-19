@@ -24,7 +24,7 @@ function send_replication_request($filename, $correlation_id, $object_id) {
 		    'reply_key'      => 'dpn.utexas.inbound',
 		    'correlation_id' => $correlation_id,
 		    'sequence'       => 0,
-		    'date'           => date('c', time()),
+		    'date'           => get_datestamp(),
 		    'ttl'            => get_ttl(),
 		),
 	);
@@ -58,7 +58,7 @@ function send_replication_location_reply($protocol, $location, $reply_key, $corr
 		    'reply_key'      => 'dpn.utexas.inbound',
 		    'correlation_id' => $correlation_id,
 		    'sequence'       => 2,
-		    'date'           => date('c', time()),
+		    'date'           => get_datestamp(),
 		    'ttl'            => get_ttl(),
 		),
 	);
@@ -95,7 +95,7 @@ function send_replication_verify_reply($message_att, $reply_key, $correlation_id
 		    'reply_key'      => 'dpn.utexas.inbound',
 		    'correlation_id' => $correlation_id,
 		    'sequence'       => 5,
-		    'date'           => date('c', time()),
+		    'date'           => get_datestamp(),
 		    'ttl'            => get_ttl(),
 		),
 	);
@@ -126,7 +126,7 @@ function send_replication_available_reply($protocol, $reply_key, $correlation_id
 		    'reply_key'      => 'dpn.utexas.inbound',
 		    'correlation_id' => $correlation_id,
 		    'sequence'       => 1,
-		    'date'           => date('c', time()),
+		    'date'           => get_datestamp(),
 		    'ttl'            => get_ttl(),
 		),
 	);
@@ -158,7 +158,7 @@ function send_replication_transfer_reply($message_att, $reply_key, $correlation_
 		    'reply_key'      => 'dpn.utexas.inbound',
 		    'correlation_id' => $correlation_id,
 		    'sequence'       => 4,
-		    'date'           => date('c', time()),
+		    'date'           => get_datestamp(),
 		    'ttl'            => get_ttl(),
 		),
 	);
@@ -190,7 +190,7 @@ function send_registry_entry_created($message_att, $reply_key, $correlation_id) 
 		    'reply_key'      => 'dpn.utexas.inbound',
 		    'correlation_id' => $correlation_id,
 		    'sequence'       => 1,
-		    'date'           => date('c', time()),
+		    'date'           => get_datestamp(),
 		    'ttl'            => get_ttl(),
 		),
 	);
@@ -223,7 +223,7 @@ function send_registry_item_create($correlation_id, $body) {
 		    'reply_key'      => 'dpn.utexas.inbound',
 		    'correlation_id' => $correlation_id,
 		    'sequence'       => 0,
-		    'date'           => date('c', time()),
+		    'date'           => get_datestamp(),
 		    'ttl'            => get_ttl(),
 		),
 	);
@@ -262,7 +262,7 @@ function send_registry_daterange_sync_request($start, $end, $correlation_id) {
 		    'reply_key'      => 'dpn.utexas.inbound',
 		    'correlation_id' => $correlation_id,
 		    'sequence'       => 0,
-		    'date'           => date('c', time()),
+		    'date'           => get_datestamp(),
 		    'ttl'            => get_ttl(),
 		),
 	);
@@ -298,7 +298,7 @@ function send_registry_daterange_sync_list_reply($start, $end, $correlation_id, 
 		    'reply_key'      => 'dpn.utexas.inbound',
 		    'correlation_id' => $correlation_id,
 		    'sequence'       => 0,
-		    'date'           => date('c', time()),
+		    'date'           => get_datestamp(),
 		    'ttl'            => get_ttl(),
 		),
 	);
@@ -338,7 +338,7 @@ function send_recovery_request($correlation_id, $object_id) {
 		    'reply_key'      => 'dpn.utexas.inbound',
 		    'correlation_id' => $correlation_id,
 		    'sequence'       => 0,
-		    'date'           => date('c', time()),
+		    'date'           => get_datestamp(),
 		    'ttl'            => get_ttl(),
 		),
 	);
@@ -375,7 +375,7 @@ function send_recovery_available_reply($protocol, $reply_key, $correlation_id) {
 		    'reply_key'      => 'dpn.utexas.inbound',
 		    'correlation_id' => $correlation_id,
 		    'sequence'       => 1,
-		    'date'           => date('c', time()),
+		    'date'           => get_datestamp(),
 		    'ttl'            => get_ttl(),
 		),
 	);
@@ -412,7 +412,7 @@ function send_recovery_transfer_request($protocol, $reply_key, $correlation_id, 
 		    'reply_key'      => 'dpn.utexas.inbound',
 		    'correlation_id' => $correlation_id,
 		    'sequence'       => 2,
-		    'date'           => date('c', time()),
+		    'date'           => get_datestamp(),
 		    'ttl'            => get_ttl(),
 		),
 	);
@@ -449,7 +449,7 @@ function send_recovery_transfer_reply($protocol, $reply_key, $correlation_id, $l
 		    'reply_key'      => 'dpn.utexas.inbound',
 		    'correlation_id' => $correlation_id,
 		    'sequence'       => 3,
-		    'date'           => date('c', time()),
+		    'date'           => get_datestamp(),
 		    'ttl'            => get_ttl(),
 		),
 	);
@@ -482,7 +482,7 @@ function send_recovery_transfer_status($protocol, $reply_key, $status, $fixity, 
 		    'reply_key'      => 'dpn.utexas.inbound',
 		    'correlation_id' => $correlation_id,
 		    'sequence'       => 4,
-		    'date'           => date('c', time()),
+		    'date'           => get_datestamp(),
 		    'ttl'            => get_ttl(),
 		),
 	);
@@ -539,8 +539,18 @@ function get_dpn_message() {
 //
 
 function get_ttl() {
-	return date('c', time() + 60* 5);
+	return gmdate("Y-m-d\TH:i:s\Z", time() + 60 * 5);
 }
+
+
+//
+// Get the date stamp in proper format
+//
+
+function get_datestamp() {
+        return gmdate("Y-m-d\TH:i:s\Z");
+}
+
 
 // 
 // Set up standard queue
