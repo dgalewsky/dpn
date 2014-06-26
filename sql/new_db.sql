@@ -91,7 +91,8 @@ create table dpn_registry_item_create_message_detail (
   );
   
 --
--- DPN recovery record
+-- DPN recovery record. Used by the node requesting the recovery (i.e. the node 
+-- that needs the bag).
 --
 
 CREATE TABLE dpn_recovery_request (
@@ -101,6 +102,9 @@ CREATE TABLE dpn_recovery_request (
 	creation_timestamp DATETIME DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now')),
 	recovery_source varchar(256),
 	status varchar(256),
+	location varchar(256),
+	protocol varchar(256),
+	reply_key varchar(256),
 	recovery_succesful_timestamp DATETIME);  
   
 --

@@ -24,6 +24,8 @@
 	$obj_id = $ret['object_id'];
 	$reply_key = $ret['reply_key'];
 	$correlation_id = $ret['correlation_id'];
+
+        echo "obj $obj_id reply $reply_key corr $correlation_id\n";
 	
 	if ($obj_id == '') {
 	    $log->LogInfo('Nothing to recover.');
@@ -44,6 +46,8 @@
 
 	// This should probably go to /dpn/recovery - once I have root access
 	
+	//str_replace('\/', '/', json_encode($body)
+		
 	$handle = popen("iget -P -f tdr/$dirpart/$correlation_id /dpn/outgoing", 'r');
 
 	while(!feof($handle)) {

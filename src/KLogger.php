@@ -41,7 +41,7 @@
 		
 		public function __construct( $filepath , $priority )
 		{
-			date_default_timezone_set('UTC');
+			date_default_timezone_set('America/Chicago');
 
 			if ( $priority == KLogger::OFF ) return;
 			

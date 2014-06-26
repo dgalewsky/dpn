@@ -429,7 +429,7 @@ function send_recovery_transfer_request($protocol, $reply_key, $correlation_id, 
 	
 	$ex->publish(json_encode($body), $reply_key, AMQP_NOPARAM, $properties);
 	
-	set_recovery_request_recovery_source($correlation_id, $from);
+	set_recovery_request_recovery_source($correlation_id, $from, $reply_key);
 }
 
 

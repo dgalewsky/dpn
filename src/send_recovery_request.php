@@ -3,7 +3,7 @@
 <?php
 	
 	//
-	// Send a registry-daterange-sync-request.
+	// Send a recovery request.
 	//
 	
 	require_once 'dpn_utils.php';

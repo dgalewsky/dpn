@@ -130,6 +130,7 @@ function new_inbound_transfer($correlation_id, $protocol, $location, $reply_key,
 
 //
 // Get next inbound file. This needs to be tightened up - a bit.
+// TODO - Should this have a limit 1 ?
 //
 
 function get_next_inbound_file() {
@@ -145,6 +146,30 @@ function get_next_inbound_file() {
 
 	return $res;		
 }
+
+//
+// Get next recovery file. 
+//
+
+function get_next_recovery_file() {
+	
+	$status = INITIATED_STATUS;
+	
+        $db = db_connect();
+	$ret = $db->query("SELECT correlation_id, location,  reply_key FROM dpn_recovery_request where status = '$status' and location is not null order by creation_timestamp limit 1");
+		
+	$res = $ret->fetchArray(SQLITE3_ASSOC);
+	
+
+        $db->close();
+        unset($db);
+
+	return $res;		
+}
+
+
+
+
 
 //
 // Set the status field for an inbound_file record
@@ -174,6 +199,22 @@ function get_inbound_reply_key_from_correlation_id($correlation_id) {
 
 	return $path;		
 }
+
+
+
+// Map correlation_id to reply_key in the recovery file table
+
+function get_recovery_reply_key_from_correlation_id($correlation_id) {
+        $db = db_connect();
+	$path = $db->querySingle("SELECT reply_key FROM dpn_recovery_request where correlation_id = '$correlation_id'");
+
+        $db->close();
+        unset($db);
+
+	return $path;		
+}
+
+
 
 //
 // Set the checksum field for an inbound_file record
@@ -268,11 +309,11 @@ function new_recovery_file($correlation_id, $object_id, $reply_key) {
 // Set recovery_source for a Recovery Request
 //
 
-function set_recovery_request_recovery_source($correlation_id, $recovery_source) {
+function set_recovery_request_recovery_source($correlation_id, $recovery_source, $reply_key) {
 	
         $db = db_connect();
 	
-	$db->exec("update dpn_recovery_request set recovery_source = '$recovery_source' where correlation_id = '$correlation_id'");
+	$db->exec("update dpn_recovery_request set recovery_source = '$recovery_source', reply_key = '$reply_key' where correlation_id = '$correlation_id'");
 	
 
         $db->close();
@@ -322,6 +363,25 @@ function set_recovery_request_status($correlation_id, $status) {
 }
 
 //
+// Set the location and protocol in a recovery request so that the pull operation
+// knows where/how to pull
+//
+
+function set_recovery_request_location($location, $protocol, $correlation_id) {
+        $db = db_connect();
+        
+        // Get ZULU time for timestamp
+        
+        $timestr = date('c', time());
+	
+	$db->exec("update dpn_recovery_request set location = '$location', protocol = '$protocol' where correlation_id = '$correlation_id'");
+	
+        $db->close();
+        unset($db);	
+}
+
+
+//
 // Set status for a Recovery File
 //
 
@@ -341,13 +401,34 @@ function set_recovery_file_status($correlation_id, $status) {
 }
 
 //
-// Get next recovery file. 
+// Set status for a Recovery Request record
 //
 
-function get_next_recovery_file() {
+function set_recovery_request_file_status($correlation_id, $status) {
+	
+        $db = db_connect();
+        
+        // Get ZULU time for timestamp
+        
+        $timestr = date('c', time());
+	
+	$db->exec("update dpn_recovery_request set status = '$status' where correlation_id = '$correlation_id'");
+
+        $db->close();
+        unset($db);
+}
+
+
+//
+// Get next recovery file. Stage for transfer - called by the supplying node
+//
+
+function get_next_recovery_staged_file() {
 	
         $db = db_connect();
         $status = READY_TO_STAGE_STATUS;
+        
+        // TODO - Should I add 'limit 1' ?
         
 	$ret = $db->query("SELECT object_id, reply_key, correlation_id FROM dpn_recovery_file where status = '$status' order by creation_timestamp");
 		

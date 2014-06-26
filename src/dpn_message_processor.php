@@ -384,12 +384,11 @@
 			// See if we actually have the object 
 			
 			$reg = get_registry_info($object_id);
-			
-			var_dump($reg);
-			
+					
 			//
 			// TODO -- We should send a 'NAK'
 			//
+			
 			if (!$reg) {
 			    $log->LogInfo("ERROR - Request for DPN object that we do not have: $object_id . Not sending recovery-available-reply");
 			    return;			    	    
@@ -440,7 +439,9 @@
 			$message_att = $body['message_att'];
 			$protocol = $body['protocol'];
 
-			// At this point we go and stage the content  
+			// At this point we go and stage the content  - we have the content.
+			// We just need to pull it from irods.
+			//
 			// The dpn_recovery_request record starts off in state 'initiated'.
 			// 
 			
@@ -448,7 +449,10 @@
 			
 			// Now a daemon needs to stage the file - and then send a recovery_transfer_reply - with the path to the file
 			
-			//send_recovery_transfer_reply("rsync", $reply_key, $correlation_id, "/path-to/stage/file");				
+			// Send the reply (need to clean this up)
+			echo ("REPL NODE - Sending recovery reply - with location\n");
+			
+			send_recovery_transfer_reply("rsync", $reply_key, $correlation_id, "/path-to/stage/file");				
 	
 			return;
 		}
@@ -456,6 +460,7 @@
 
 		//
 		// (First-node) recovery-transfer-reply - Received from replicating node - indicating that the bag has been staged and is ready to pull
+		// Record the recovery information (location and protocol).
 		//
 		
 		if ($message_name == 'recovery-transfer-reply' ) {
@@ -465,9 +470,13 @@
 			$protocol = $body['protocol'];
 			$location = $body['location'];
 			
+			echo ("First Node loc $location prot $protocol corr $correlation_id");
+			
+			set_recovery_request_location($location, $protocol, $correlation_id);
+			
 			// At this point we pull the content and then when we are done sending - send:
 			
-			send_recovery_transfer_status("rsync", $reply_key, 'ack', 'ou812-fixity', $correlation_id);				
+			// send_recovery_transfer_status("rsync", $reply_key, 'ack', 'ou812-fixity', $correlation_id);				
 	
 			return;
 		}		
