@@ -452,7 +452,8 @@
 			// Send the reply (need to clean this up)
 			echo ("REPL NODE - Sending recovery reply - with location\n");
 			
-			send_recovery_transfer_reply("rsync", $reply_key, $correlation_id, "/path-to/stage/file");				
+			
+			send_recovery_transfer_reply("rsync", $reply_key, $correlation_id, "/dpn/recovery_outgoing/a7b18eb0-005f-11e3-8ebb-f23c91aec05e.tar");				
 	
 			return;
 		}

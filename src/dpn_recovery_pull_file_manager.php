@@ -41,7 +41,7 @@
 	
 	// Rsync the file
 	
-	$handle = popen("rsync -avL $location /dpn/incoming/", 'r');
+	$handle = popen("rsync -avL $location /dpn/recovery_incoming/", 'r');
 
 	while(!feof($handle)) { 
 	    $read = fread($handle, 1024); 
@@ -57,8 +57,10 @@
 	
 	// Figure out the path to the file we just got.
 	
-	$parts = preg_split('/:/', $location, -1, PREG_SPLIT_NO_EMPTY);
-	$incoming_path = "/dpn/incoming/" . basename($parts[1]);
+	echo ("\n^^^Location: $location");
+		
+	// $parts = preg_split('/:/', $location, -1, PREG_SPLIT_NO_EMPTY);
+	$incoming_path = "/dpn/recovery_incoming/" . basename($location);
 	
 	// Calculate and save checksum
 	
