@@ -10,18 +10,18 @@ $log = new KLogger($_SERVER["DPN_HOME"] . "/log/dpn_log.txt", KLogger::INFO);
 // Create a new dpn_file record
 //
 
-function new_dpn_file($filename, $checksum, $filesize, $correlation_id) {
+function new_dpn_file($filename, $checksum, $filesize, $correlation_id, $dpn_object_id) {
 
 	$db = db_connect();
 	
-	$dpn_object_id = uuid();
+	//$dpn_object_id = uuid();
 
 	
 	$db->exec("INSERT INTO dpn_file (file_path, checksum, file_size, correlation_id, dpn_object_id) VALUES ('$filename', '$checksum', '$filesize', '$correlation_id', '$dpn_object_id')");
 	
 	$db->close();
 	unset($db);
-	return $dpn_object_id;
+	//return $dpn_object_id;
 }
 
 //

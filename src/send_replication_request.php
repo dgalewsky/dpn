@@ -7,6 +7,8 @@
 	// Send a replication request message for a file.
 	// The file is expected to be in /dpn/outgoing.
 	// This also creates the registry record for the outgoing file.
+	// NOTE - this file will be renamed - to match the minted dpn 
+	// object_id.
 	//
 	
 	require_once 'dpn_utils.php';
@@ -45,7 +47,25 @@
 	// the file is officially scheduled for replication.
 	// The dpn_file table is a place to keep track of the status of the messages being exchanged.
 	
-	$object_id = new_dpn_file($file, $checksum, $filesize, $correlation_id);
+	// Mint a new object_id
+	
+	$object_id = uuid();
+	
+	// Make an appropriately named copy of the file
+	
+	$dpn_staged_file = $outgoing_path . $object_id . ".tar";
+	
+	echo "File being staged = $dpn_staged_file\n";
+	
+	if (!copy($file, $dpn_staged_file)) {
+		echo "failed to copy $file...\n";
+	}	
+	
+
+	
+	new_dpn_file($dpn_staged_file, $checksum, $filesize, $correlation_id, $object_id);
+	
+
 	
 	//Now create the registry record.
 	
