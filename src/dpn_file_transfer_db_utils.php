@@ -188,6 +188,23 @@ function set_inbound_file_status($correlation_id, $status) {
 
 }
 
+//
+// Set the file name field for an inbound_file record
+//
+
+function set_inbound_file_name($correlation_id, $filename) {
+	
+        $db = db_connect();
+
+	
+	$db->exec("update dpn_inbound_transfer set file_name = '$filename' where correlation_id = '$correlation_id'");
+	
+
+        $db->close();
+        unset($db);
+
+}
+
 // Map correlation_id to reply_key
 
 function get_inbound_reply_key_from_correlation_id($correlation_id) {
@@ -198,6 +215,20 @@ function get_inbound_reply_key_from_correlation_id($correlation_id) {
         unset($db);
 
 	return $path;		
+}
+
+
+
+// Get inbound filename from correlation id
+
+function get_inbound_file_name_from_correlation_id($correlation_id) {
+        $db = db_connect();
+	$fname = $db->querySingle("SELECT file_name FROM dpn_inbound_transfer where correlation_id = '$correlation_id'");
+
+        $db->close();
+        unset($db);
+
+	return $fname;		
 }
 
 

@@ -22,6 +22,8 @@ define('INITIATED_STATUS', 'initiated');
 define('READY_TO_STAGE_STATUS', 'ready_to_stage');
 define('STAGED_STATUS', 'staged');
 
+define('INCOMING_DIRECTORY', '/dpn/incoming');
+
 
 function bag_size_format($path) {       
         $size = filesize($path);

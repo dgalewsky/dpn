@@ -4,7 +4,6 @@
 	require_once 'common.php';
 	require_once 'dpn_utils.php';
 
-	define('INCOMING_DIRECTORY', '/dpn/incoming');
 	
 	//
 	// Pull a recovery file from a remote node who has staged the content for us

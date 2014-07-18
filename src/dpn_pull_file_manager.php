@@ -3,8 +3,6 @@
 	require_once 'dpn_file_transfer_db_utils.php';
 	require_once 'common.php';
 	require_once 'dpn_utils.php';
-
-	define('INCOMING_DIRECTORY', '/dpn/incoming');
 	
 	
 	// Set up the logger	
@@ -28,8 +26,10 @@
 	$log->LogInfo("Location: $location");
 	
 	set_inbound_file_status($correlation_id, TRANSFERRING_STATUS);
-		
-	$handle = popen("rsync -avL $location /dpn/incoming/", 'r');
+	
+	$incoming_directory = INCOMING_DIRECTORY;
+	
+	$handle = popen("rsync -avL $location $incoming_directory", 'r');
 
 	while(!feof($handle)) { 
 	    $read = fread($handle, 1024); 
@@ -44,7 +44,10 @@
 	// Figure out the path to the file we just got.
 	
 	$parts = preg_split('/:/', $location, -1, PREG_SPLIT_NO_EMPTY);
-	$incoming_path = "/dpn/incoming/" . basename($parts[1]);
+	
+	$fname = basename($parts[1]);
+		
+	$incoming_path = $incoming_directory . "/" . $fname;
 	
 	// Calculate and save checksum
 	
@@ -54,5 +57,9 @@
 	// Update the database record to reflect the checksum we computed
 	
 	set_inbound_file_checksum($correlation_id, $checksum);
+	
+	// Keep the filename (aka object_id) from this rsynch
+	
+	set_inbound_file_name($correlation_id, $fname);
 	
 	send_replication_transfer_reply('ack', $reply_key, $correlation_id, $checksum);

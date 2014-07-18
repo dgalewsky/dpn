@@ -29,6 +29,7 @@ CREATE TABLE dpn_inbound_transfer (
 	location varchar(256),
 	source varchar(256),
 	reply_key varchar(256),
+	file_name varchar(256),
 	checksum varchar(256));
 
 --

@@ -302,6 +302,7 @@
 		// from DPN.
 		// Recipt of this message indicates that the first node validated that we received the dpn object
 		// If we never receive ACK - then delete the file at some point.
+		// Move the file to the repository
 		//
 		
 		if ($message_name == 'replication-verify-reply') {
@@ -315,7 +316,15 @@
 			if ($message_att == 'ack') {		
 				set_inbound_file_status($correlation_id, COMPLETE_STATUS);	
 				
-				// File xfer was successful - move file to iRODS and delete from staging area
+				$fname = get_inbound_file_name_from_correlation_id($correlation_id); 				
+				
+				$src_path = INCOMING_DIRECTORY . '/' . $fname;
+				$repo_path = "/dpn/repository/" . $fname;
+				
+				
+				$log->LogInfo("Moving file to repository - source path " . $src_path);
+				
+				rename($src_path, $repo_path);
 				
 			}
 			
