@@ -439,6 +439,8 @@
 		
 		//
 		// (Replicating-node) recovery-transfer-request - Received from a first-node indicating that we should stage the content. We have been chosen.
+		// First step - retrieve the file from the repository and put it into recovery_outgoing
+		// Then send the messages that the file is ready
 		//
 		
 		if ($message_name == 'recovery-transfer-request' ) {
@@ -456,13 +458,21 @@
 			
 			set_recovery_file_status($correlation_id,  READY_TO_STAGE_STATUS);
 			
+			// Get object id from correlation id
+			
+			$object_id = get_recovery_object_id_from_correlation_id($correlation_id);
+			
 			// Now a daemon needs to stage the file - and then send a recovery_transfer_reply - with the path to the file
 			
 			// Send the reply (need to clean this up)
-			echo ("REPL NODE - Sending recovery reply - with location\n");
+			echo ("REPL NODE - Sending recovery reply - with location. For object: $object_id\n");
 			
+			// Copy the file from /dpn/repository to /dpn/recovery_outgoing then Presto - all is good.
+			copy("/dpn/repository/". $object_id . ".tar", "/dpn/recovery_outgoing/". $object_id . ".tar");
 			
-			send_recovery_transfer_reply("rsync", $reply_key, $correlation_id, "/dpn/recovery_outgoing/a7b18eb0-005f-11e3-8ebb-f23c91aec05e.tar");				
+			$log->LogInfo("Recover Transfer Request " . "/dpn/repository/". $object_id . ".tar" . " " . "/dpn/recovery_outgoing");
+			
+			send_recovery_transfer_reply("rsync", $reply_key, $correlation_id, "/dpn/recovery_outgoing/" . $object_id . ".tar");				
 	
 			return;
 		}

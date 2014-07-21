@@ -471,5 +471,20 @@ function get_next_recovery_staged_file() {
 
 	return $res;		
 }
+
+//
+// Figure out the object id in this transaction - from the correlation_id
+//
+
+function get_recovery_object_id_from_correlation_id($correlation_id) {
+        $db = db_connect();	
+        $obj = $db->querySingle("SELECT object_id FROM dpn_recovery_file where correlation_id = '$correlation_id'");
+        
+        $db->close();
+        unset($db);
+
+	return $obj;		        
+}
+
 ?>
 

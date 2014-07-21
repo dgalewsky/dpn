@@ -464,7 +464,7 @@ function send_recovery_transfer_reply($protocol, $reply_key, $correlation_id, $l
 
 	$log->LogInfo("SENT: " . json_encode($body));
 	
-	$ex->publish(json_encode($body), $reply_key, AMQP_NOPARAM, $properties);
+	$ex->publish(str_replace('\/', '/', json_encode($body)), $reply_key, AMQP_NOPARAM, $properties);
 }
 
 //
