@@ -8,11 +8,16 @@
 	// Set up the logger	
 	$log = new KLogger ( $_SERVER['DPN_HOME'] . "/log/dpn_log.txt" , KLogger::INFO );	
 
-	//rsync -azv /dpn/outgoing/ /dpn/incoming/
-
 	error_reporting(E_ALL);
 	
+	//
+	// Go see if there is a new file waiting to be 'rsync'ed. 
+	// Get the path to rsync from, and the correlation id of the 
+	// message chain.
+	//
+	
 	$ret = get_next_inbound_file();
+	
 	
 	$location = $ret['location'];
 	$correlation_id = $ret['correlation_id'];
@@ -25,11 +30,21 @@
 	
 	$log->LogInfo("Location: $location");
 	
+	//
+	// Ok - we have a file to pull - set it's status to TRANSFERRING
+	//
+	
 	set_inbound_file_status($correlation_id, TRANSFERRING_STATUS);
 	
 	$incoming_directory = INCOMING_DIRECTORY;
 	
-	$handle = popen("rsync -avL $location $incoming_directory", 'r');
+	//
+	// Do the actual rsync of the asset.
+	//	
+	
+	echo "exec-ing process";
+	
+	$handle = popen("php dpn_pull_file_process.php $location $correlation_id", 'r');
 
 	while(!feof($handle)) { 
 	    $read = fread($handle, 1024); 
@@ -39,27 +54,5 @@
 	
 	pclose($handle);
 	
-	$reply_key = get_inbound_reply_key_from_correlation_id($correlation_id);
-	
-	// Figure out the path to the file we just got.
-	
-	$parts = preg_split('/:/', $location, -1, PREG_SPLIT_NO_EMPTY);
-	
-	$fname = basename($parts[1]);
-		
-	$incoming_path = $incoming_directory . "/" . $fname;
-	
-	// Calculate and save checksum
-	
-	$checksum = hash_file('sha256', "$incoming_path");
-	$log->LogInfo("File $incoming_path Checksum $checksum");
-	
-	// Update the database record to reflect the checksum we computed
-	
-	set_inbound_file_checksum($correlation_id, $checksum);
-	
-	// Keep the filename (aka object_id) from this rsynch
-	
-	set_inbound_file_name($correlation_id, $fname);
-	
-	send_replication_transfer_reply('ack', $reply_key, $correlation_id, $checksum);
+	echo "End of exec process";
+

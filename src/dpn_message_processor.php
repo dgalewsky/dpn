@@ -472,7 +472,7 @@
 			
 			$log->LogInfo("Recover Transfer Request " . "/dpn/repository/". $object_id . ".tar" . " " . "/dpn/recovery_outgoing");
 			
-			send_recovery_transfer_reply("rsync", $reply_key, $correlation_id, "/dpn/recovery_outgoing/" . $object_id . ".tar");				
+			send_recovery_transfer_reply("rsync", $reply_key, $correlation_id, RSYNC_HOST_STRING . "/dpn/recovery_outgoing/" . $object_id . ".tar");				
 	
 			return;
 		}
