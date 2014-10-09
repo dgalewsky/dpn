@@ -15,6 +15,10 @@ function make_dpn_bag($indir, $outdir) {
 	#$bag_program = '/usr/local/bagit/bin/bag';
 		
 	$guid = guidv4();
+
+	//
+	// NOTE - This program is responsible for assigning/minting the DPN Object ID.
+	// The object ID is the name of the file. The object ID is also in the DPN Info file.
 	
 	echo "Guid: " . $guid . "\n";
 	
@@ -76,9 +80,9 @@ EOD;
 	
 	echo "\nBag path: " . $outdir . "/" .  $guid . ".tar" . " " . $outdir . "/" . $guid . "\n";
 	
-	echo "*** Returning " . $outdir . "/" .  $guid . ".tar";
+	echo "*** Returning " . $guid;
 	
-	return $outdir . "/" .  $guid . ".tar";
+	return $guid;
 }
 
 

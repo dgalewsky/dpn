@@ -15,15 +15,15 @@
 	$indir = $argv[1];
 	$outdir = $argv[2];
 	
-	if (!is_dir($indir)) {
-	    echo "$indir is not a directory. It must be a directory.";
-	    die();
-	}
+	// Input can be a file. Output is a dir.
 	
 	if (!is_dir($outdir)) {
 	    echo "$outdir is not a directory. It must be a directory.";
 	    die();
 	}
 		
-	make_dpn_bag($indir, $outdir);	
-
+	$obj_id = make_dpn_bag($indir, $outdir);	
+	
+	echo "\nMake_dpn_bag - returning- $obj_id\n";
+	
+	return $obj_id;

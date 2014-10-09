@@ -45,7 +45,7 @@
 		echo "spawning process...\n";
 		
 		// $handle = popen("php /mnt/dpn_test_env/dpn_remote/src/dpn_pull_file_process.php $location $correlation_id &", 'r');
-		$ret = shell_exec("php /mnt/dpn_test_env/dpn_remote/src/dpn_pull_file_process.php $location $correlation_id > /dev/null 2>&1 &");
+		$ret = shell_exec("php $_SERVER['DPN_HOME']/src/dpn_pull_file_process.php $location $correlation_id > /dev/null 2>&1 &");
 	
 		//while(!feof($handle)) { 
 		 //   $read = fread($handle, 1024); 

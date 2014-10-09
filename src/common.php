@@ -23,6 +23,7 @@ define('READY_TO_STAGE_STATUS', 'ready_to_stage');
 define('STAGED_STATUS', 'staged');
 
 define('INCOMING_DIRECTORY', '/dpn/incoming');
+define('OUTGOING_DIRECTORY', '/dpn/outgoing');
 
 
 function bag_size_format($path) {       

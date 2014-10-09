@@ -7,8 +7,8 @@
 	// Send a replication request message for a file.
 	// The file is expected to be in /dpn/outgoing.
 	// This also creates the registry record for the outgoing file.
-	// NOTE - this file will be renamed - to match the minted dpn 
-	// object_id.
+	// NOTE - It is assumed that the name of the file is the DPN object id
+	// and that the file is a tar file that matches the DPN spec.
 	//
 	
 	require_once 'dpn_utils.php';
@@ -18,10 +18,14 @@
 	
 	if ($argc != 2) {
 		echo "Usage: " . $argv[0] . "<filename>\n";
+		echo "Filename will be used as the DPN object ID\n";
 		die();	
 	}
 	
-	$file = $argv[1];	
+	$file = $argv[1];
+	
+	// The filename is expected to be a dpn object id.
+	$object_id = $argv[1];	
 	
 	$file = $outgoing_path . $file;
 	
@@ -49,7 +53,7 @@
 	
 	// Mint a new object_id
 	
-	$object_id = uuid();
+	// $object_id = uuid();
 	
 	// Make an appropriately named copy of the file
 	

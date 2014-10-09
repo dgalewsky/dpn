@@ -1,9 +1,5 @@
 # Invoke send_replication_request - supply filename in the /dpn/outgoing directory
 
-php $DPN_HOME/src/send_replication_request.php a7b18eb0-005f-11e3-8ebb-f23c91aec05e.tar
+php $DPN_HOME/src/send_replication_request.php cc6915d6-f039-4747-8448-1666e80de06b.tar
 
-#echo "Starting poll loop"
-
-#get.sh
-
-
+#echo "Starting poll 

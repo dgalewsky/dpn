@@ -140,6 +140,16 @@ END;
 	
 }
 
+// 
+// Save away the JSON for this registry entry. Save in the dpn local repository.
+//
+
+function save_registry_json($body) {
+	$dpn_object_id = $body['dpn_object_id'];
+	$json = json_encode($body);
+		
+}
+
 // Return a registry_id - given an object_id
 
 function get_registry_id($obj) {

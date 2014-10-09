@@ -36,6 +36,7 @@
 			
 		} catch ( Exception $e ) {
 			$log->LogInfo($e->getMessage() );
+			exit("Exception initializing connections to Rabbit Broker\n");			
 		}
 		
 		$log->LogInfo("Exception with AMQPConnection");
@@ -245,7 +246,16 @@
 				// FIXME - Is it ok to re-use correlation_id ??
 				// Now update the network with the new information
 				
-				send_registry_item_create($correlation_id, $body);			        			        			      			        
+				send_registry_item_create($correlation_id, $body);	
+				
+				$outgoing_directory = OUTGOING_DIRECTORY;
+				
+				// Now remove the DPN object. It has been transferred.
+				$log->LogInfo("Removing dpn bag: " . $outgoing_directory . '/' . $obj . ".tar");
+				if (!unlink($outgoing_directory . '/' . $obj . ".tar")) {
+					$log->LogInfo("Error occured deleting file $obj");	
+				}
+				
 			        
 			    } else {
 			    	set_outbound_transfer_retry($correlation_id, $from);
