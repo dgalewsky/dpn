@@ -92,7 +92,7 @@ END;
 		$stmt->bindValue(10,$last_fixity_date,SQLITE3_TEXT);           
 		$stmt->bindValue(11,$creation_date,SQLITE3_TEXT);              
 		$stmt->bindValue(12,$last_modified_date,SQLITE3_TEXT);         
-		$stmt->bindValue(13,$bag_size,SQLITE3_INTEGER);                   
+		$stmt->bindValue(13,$bag_size,SQLITE3_TEXT);                   
 		$stmt->bindValue(14,$object_type,SQLITE3_TEXT);
 		
 		$result = $stmt->execute();

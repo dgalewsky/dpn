@@ -71,7 +71,7 @@ create table dpn_registry_item_create_message_detail (
 	  last_fixity_date datetime,           
 	  creation_date datetime,            
 	  last_modified_date datetime,                                                                  
-	  bag_size integer,  
+	  bag_size varchar(256),  
 	  object_type varchar(256)
  
   );          
