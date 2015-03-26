@@ -535,11 +535,11 @@ function get_dpn_message() {
 }
 
 // 
-// Get a standard value for time to live. Now plus 5 hours.
+// Get a standard value for time to live. The time() function returns seconds. 
 //
 
 function get_ttl() {
-	return gmdate("Y-m-d\TH:i:s\Z", time() + 60 * 5);
+	return gmdate("Y-m-d\TH:i:s\Z", time() +  60 * 10);
 }
 
 

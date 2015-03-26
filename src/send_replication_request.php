@@ -57,7 +57,7 @@
 	
 	// Make an appropriately named copy of the file
 	
-	$dpn_staged_file = $outgoing_path . $object_id . ".tar";
+	$dpn_staged_file = $outgoing_path . $object_id ;
 	
 	echo "File being staged = $dpn_staged_file\n";
 	
@@ -65,25 +65,21 @@
 		echo "failed to copy $file...\n";
 	}	
 	
-
-	
-	new_dpn_file($dpn_staged_file, $checksum, $filesize, $correlation_id, $object_id);
-	
-
+	new_dpn_file($dpn_staged_file, $checksum, $filesize, $correlation_id, basename($object_id,".tar"));
 	
 	//Now create the registry record.
 	
 	$body = array();
 	$node = NODE;
 	
-	$body['dpn_object_id'] = $object_id;          
+	$body['dpn_object_id'] = basename($object_id, ".tar");          
 	$body['local_id'] = $file;                  
 	$body['first_node_name'] = "$node";           
 	$body['replicating_node_names'] = array("$node");    
 	$body['version_number'] = '1';            
-	$body['previous_version_object_id'] = '';
-	$body['forward_version_object_id']  = '';
-	$body['first_version_object_id'] = $object_id;   
+	$body['previous_version_object_id'] = 'null';
+	$body['forward_version_object_id']  = 'null';
+	$body['first_version_object_id'] = basename($object_id, ".tar");   
 	$body['fixity_algorithm']  = 'sha256';         
 	$body['fixity_value'] = $checksum;              
 	$body['last_fixity_date'] = date('c');  
@@ -98,4 +94,5 @@
 	
 	// All of the 'paperwork' has been filed - initiate the transfer
 	
-	send_replication_request($file, $correlation_id, $object_id);
+	send_replication_request($file, $correlation_id, basename($object_id, '.tar'));
+
